@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Moah",
+  title: "모아 - Moah",
   description: "Self-hosted media manager",
 };
 
