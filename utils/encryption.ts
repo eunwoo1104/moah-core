@@ -13,6 +13,6 @@ export function argon2encrypt(text: string): Promise<string> {
   return argon2.hash(text);
 }
 
-export function argon2Match(hashed: string, text: string): Promise<boolean> {
+export function argon2match(hashed: string, text: string): Promise<boolean> {
   return argon2.verify(hashed, text);
 }
