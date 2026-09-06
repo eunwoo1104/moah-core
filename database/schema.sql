@@ -1,12 +1,12 @@
-CREATE DATABASE IF NOT EXISTS moah DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+CREATE DATABASE IF NOT EXISTS moah_core DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-USE moah;
+USE moah_core;
 
 CREATE TABLE IF NOT EXISTS user
 (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(128) UNIQUE,
-    password CHAR(64),
+    password VARCHAR(255),
     nickname VARCHAR(32) NULL DEFAULT NULL,
     username VARCHAR(32),
     avatar VARCHAR(10) NULL DEFAULT NULL,  -- TODO: foreign key from saved images

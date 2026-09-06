@@ -2,6 +2,8 @@ import { NextRequest } from "next/server";
 
 import { ValidationError } from "yup";
 
+import database from "@/utils/database";
+import { argon2encrypt } from "@/utils/encryption";
 import { builResponse, codes } from "@/utils/response";
 import { userRegistrationSchema } from "@/utils/validation";
 
@@ -22,8 +24,17 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // TODO: real logic
-  console.log(data.email);
+  const encrypted = await argon2encrypt(data.password);
 
+  const insertData = {
+    email: data.email,
+    password: encrypted,
+    username: data.username,
+    nickname: data.nickname,
+  };
+
+  await database("moah_core").insert(insertData);
+
+  // TODO: better response message and/or data
   return builResponse(200, codes.ok, "Success");
 }

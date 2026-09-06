@@ -10,6 +10,7 @@
     "format": "prettier --write \"./**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "argon2": "^0.45.1",
     "knex": "^3.3.0",
     "mysql2": "^3.23.1",
     "next": "16.2.11",
