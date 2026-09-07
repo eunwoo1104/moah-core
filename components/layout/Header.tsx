@@ -1,39 +1,105 @@
 "use client";
 
-import { useState } from "react";
-
-import { motion, AnimatePresence } from "motion/react";
-
+import { useEffect, useState } from "react";
 import Link from "next/link";
+
+import { motion, AnimatePresence, HTMLMotionProps } from "motion/react";
+
 import { icons } from "@/utils/icons";
+import Toggle from "@/components/Toggle";
 
 const HeaderCircle: React.FC<{
   className?: string;
-  onClick?: React.MouseEventHandler<HTMLParagraphElement>;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   children: React.ReactNode;
-}> = ({ className, onClick, children }) => (
-  <div
-    className={`clickable circle-icon bg-neutral-850 h-12 w-12 ${className}`}
+}> = ({ className, onClick, children, ...props }) => (
+  <button
+    className={`clickable circle-icon bg-neutral-200 dark:bg-neutral-850 h-12 w-12 ${className}`}
     onClick={onClick}
+    {...props}
   >
     {children}
-  </div>
+  </button>
+);
+
+const HeaderArea: React.FC<HTMLMotionProps<"div">> = ({
+  className,
+  children,
+  ...props
+}) => (
+  <motion.div
+    className={`bg-neutral-200 dark:bg-neutral-850 fixed top-0 right-0 left-0 md:left-auto z-30 mt-19 ml-8 mr-8 p-4 rounded-lg ${className}`}
+    initial={{ opacity: 0, y: -15 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -15 }}
+    transition={{ duration: 0.1 }}
+    {...props}
+  >
+    {children}
+  </motion.div>
 );
 
 // TODO: responsive design
+
+const SettingArea: React.FC = () => {
+  const getSelectedTheme = () => localStorage.getItem("theme") || "system";
+  const getSystemTheme = () =>
+    window.matchMedia("(prefers-color-scheme: dark)")?.matches
+      ? "dark"
+      : "light";
+
+  const [selectedTheme, setSelectedTheme] =
+    useState<string>(getSelectedTheme());
+
+  useEffect(() => {
+    if (selectedTheme !== "system")
+      localStorage.setItem("theme", selectedTheme);
+    else localStorage.setItem("theme", "system");
+    document.documentElement.classList.toggle(
+      "dark",
+      selectedTheme !== "system"
+        ? selectedTheme === "dark"
+        : getSystemTheme() === "dark",
+    );
+  }, [selectedTheme]);
+
+  return (
+    <HeaderArea className="md:w-64 space-y-2">
+      <p className="font-bold text-sm text-neutral-400">Theme Setting</p>
+      <div className="flex flex-row justify-between items-center">
+        <p>Dark Mode</p>
+        <Toggle
+          value={
+            selectedTheme === "dark" ||
+            (selectedTheme === "system" && getSystemTheme() === "dark")
+          }
+          onClick={() =>
+            setSelectedTheme(selectedTheme === "light" ? "dark" : "light")
+          }
+          disabled={selectedTheme === "system"}
+        />
+      </div>
+      <div className="flex flex-row justify-between items-center">
+        <p>Use System Theme</p>
+        <Toggle
+          value={selectedTheme === "system"}
+          onClick={() =>
+            setSelectedTheme(
+              selectedTheme === "system" ? getSystemTheme() : "system",
+            )
+          }
+        />
+      </div>
+    </HeaderArea>
+  );
+};
 
 const LoginArea: React.FC = () => {
   const onSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
   return (
-    <motion.div
-      className="bg-neutral-850 md:w-96 fixed top-0 right-0 left-0 md:left-auto z-30 mt-19 ml-8 mr-8 p-3 rounded-lg"
-      initial={{ opacity: 0, y: -15 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -15 }}
-      transition={{ duration: 0.1 }}
-    >
+    <HeaderArea className="md:w-96">
       <form className="space-y-1" onSubmit={onSubmit}>
         <label>
           Email
@@ -71,12 +137,12 @@ const LoginArea: React.FC = () => {
           />
         </div>
       </form>
-    </motion.div>
+    </HeaderArea>
   );
 };
 
 export default function Header() {
-  const [openLogin, setOpenLogin] = useState<boolean>(false);
+  const [openArea, setOpenArea] = useState<string | null>(null);
 
   return (
     <div>
@@ -99,12 +165,24 @@ export default function Header() {
         <HeaderCircle>{icons.search}</HeaderCircle>
         <div className="flex-1" />
         <HeaderCircle>{icons.help}</HeaderCircle>
-        <HeaderCircle>{icons.setting}</HeaderCircle>
-        <HeaderCircle onClick={() => setOpenLogin(!openLogin)}>
+        <HeaderCircle
+          onClick={() => setOpenArea(openArea !== "setting" ? "setting" : null)}
+        >
+          {icons.setting}
+        </HeaderCircle>
+        <HeaderCircle
+          onClick={() => setOpenArea(openArea !== "login" ? "login" : null)}
+        >
           {icons.login}
         </HeaderCircle>
       </div>
-      <AnimatePresence>{openLogin && <LoginArea />}</AnimatePresence>
+      <AnimatePresence>
+        {openArea === "setting" ? (
+          <SettingArea />
+        ) : openArea === "login" ? (
+          <LoginArea />
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }
