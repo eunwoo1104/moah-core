@@ -14,11 +14,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className="bg-white dark:bg-neutral-900 dark:text-white w-full min-h-screen pt-24">
+      <body className="bg-white dark:bg-neutral-900 dark:text-white w-full min-h-screen">
         {/* Header */}
         <Header />
         {/* Content */}
-        <div className="px-5">{children}</div>
+        <div className="content-mt content-ml content-mr">{children}</div>
       </body>
     </html>
   );

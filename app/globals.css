@@ -11,6 +11,28 @@ body {
   --color-neutral-850: oklch(23.5% 0 none)
 }
 
+@layer base {
+  button, input, textarea {
+    font-family: inherit;
+  }
+
+  input, label, textarea {
+    display: block;
+  }
+
+  input, button {
+    @apply m-0 p-0 border-0 border-solid;
+  }
+
+  form > label {
+    @apply font-normal;
+  }
+
+  input:not([type="submit"]), textarea {
+    @apply w-full box-border px-2 py-1 outline-none rounded-md border dark:border-gray-400 dark:focus:border-white dark:caret-white font-light;
+  }
+}
+
 @layer components {
   .clickable {
     @apply hover:opacity-75 cursor-pointer;
@@ -18,5 +40,17 @@ body {
 
   .circle-icon {
     @apply rounded-full flex items-center justify-center;
+  }
+
+  .content-ml {
+    @apply ml-5;
+  }
+
+  .content-mr {
+    @apply mr-5;
+  }
+
+  .content-mt {
+    @apply mt-24;
   }
 }
