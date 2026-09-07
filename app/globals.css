@@ -7,6 +7,16 @@ body {
   word-break: keep-all;
 }
 
-.clickable {
-  @apply hover:opacity-75 cursor-pointer;
+@theme {
+  --color-neutral-850: oklch(23.5% 0 none)
+}
+
+@layer components {
+  .clickable {
+    @apply hover:opacity-75 cursor-pointer;
+  }
+
+  .circle-icon {
+    @apply rounded-full flex items-center justify-center;
+  }
 }
