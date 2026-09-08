@@ -41,6 +41,10 @@ const HeaderArea: React.FC<HTMLMotionProps<"div">> = ({
   </motion.div>
 );
 
+const HelpArea: React.FC = () => (
+  <HeaderArea className="md:w-fit font-bold text-2xl text-center">soonTM</HeaderArea>
+);
+
 const SettingArea: React.FC = () => {
   const getSelectedTheme = () => localStorage.getItem("theme") || "system";
   const getSystemTheme = () =>
@@ -213,13 +217,16 @@ export default function Header() {
         >
           {icons.menu}
         </HeaderCircle>
+        {/* TODO: animation on mobile menu open (probably need to completely change structure) */}
         <div
           className={`${mobileOpen || openArea ? "flex fixed top-0 right-0 mt-19 mr-8" : "hidden"}
           md:static md:m-0 md:flex md:flex-row flex-col justify-center items-center space-y-3 md:space-y-0 md:space-x-3
           rounded-full md:bg-transparent transition-colors duration-300 backdrop-blur-xs md:backdrop-blur-none`}
           ref={areaButtonRef}
         >
-          <HeaderCircle>{icons.help}</HeaderCircle>
+          <HeaderCircle onClick={() => changeAreaStatus("help")}>
+            {icons.help}
+          </HeaderCircle>
           <HeaderCircle onClick={() => changeAreaStatus("setting")}>
             {icons.setting}
           </HeaderCircle>
@@ -230,7 +237,9 @@ export default function Header() {
       </div>
       <div ref={areaRef}>
         <AnimatePresence>
-          {openArea === "setting" ? (
+          {openArea === "help" ? (
+            <HelpArea />
+          ) : openArea === "setting" ? (
             <SettingArea />
           ) : openArea === "login" ? (
             <LoginArea />
