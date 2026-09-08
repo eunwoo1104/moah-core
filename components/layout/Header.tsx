@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 
 import { motion, AnimatePresence, HTMLMotionProps } from "motion/react";
@@ -143,11 +143,33 @@ const LoginArea: React.FC = () => {
 
 export default function Header() {
   const [openArea, setOpenArea] = useState<string | null>(null);
+  const areaRef = useRef<HTMLDivElement | null>(null);
+  const areaButtonRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!openArea) return;
+
+    const handlePointerDown = (e: PointerEvent) => {
+      const target = e.target as Node;
+
+      const clickedButtons = areaButtonRef.current?.contains(target);
+      const clickedArea = areaRef.current?.contains(target);
+
+      if (!clickedButtons && !clickedArea) {
+        setOpenArea(null);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [openArea]);
 
   return (
     <div>
       <div
-        className="fixed top-0 left-0 right-0 z-30 px-8 pb-6 pt-5 flex flex-row items-center space-x-3 transition-colors duration-300 rounded-lg
+        className="fixed top-0 left-0 right-0 z-30 px-8 pb-6 pt-5 flex flex-row items-center space-x-3 transition-colors duration-300
         before:absolute before:inset-0 before:-z-10 before:backdrop-blur-xs
         before:mask-[linear-gradient(to_bottom,black_65%,transparent)]"
       >
@@ -164,25 +186,34 @@ export default function Header() {
         </HeaderCircle>
         <HeaderCircle>{icons.search}</HeaderCircle>
         <div className="flex-1" />
-        <HeaderCircle>{icons.help}</HeaderCircle>
-        <HeaderCircle
-          onClick={() => setOpenArea(openArea !== "setting" ? "setting" : null)}
+        <div
+          className="flex flex-row items-center space-x-3"
+          ref={areaButtonRef}
         >
-          {icons.setting}
-        </HeaderCircle>
-        <HeaderCircle
-          onClick={() => setOpenArea(openArea !== "login" ? "login" : null)}
-        >
-          {icons.login}
-        </HeaderCircle>
+          <HeaderCircle>{icons.help}</HeaderCircle>
+          <HeaderCircle
+            onClick={() =>
+              setOpenArea(openArea !== "setting" ? "setting" : null)
+            }
+          >
+            {icons.setting}
+          </HeaderCircle>
+          <HeaderCircle
+            onClick={() => setOpenArea(openArea !== "login" ? "login" : null)}
+          >
+            {icons.login}
+          </HeaderCircle>
+        </div>
       </div>
-      <AnimatePresence>
-        {openArea === "setting" ? (
-          <SettingArea />
-        ) : openArea === "login" ? (
-          <LoginArea />
-        ) : null}
-      </AnimatePresence>
+      <div ref={areaRef}>
+        <AnimatePresence>
+          {openArea === "setting" ? (
+            <SettingArea />
+          ) : openArea === "login" ? (
+            <LoginArea />
+          ) : null}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
