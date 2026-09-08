@@ -1,4 +1,4 @@
-import { FaSearch, FaList, FaQuestion, FaCog } from "react-icons/fa";
+import { FaSearch, FaList, FaQuestion, FaCog, FaBars } from "react-icons/fa";
 import { FaArrowRightToBracket } from "react-icons/fa6";
 
 export const icons = {
@@ -7,4 +7,5 @@ export const icons = {
   help: <FaQuestion />,
   setting: <FaCog />,
   login: <FaArrowRightToBracket />,
+  menu: <FaBars />,
 };

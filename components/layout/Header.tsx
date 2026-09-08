@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, ComponentPropsWithRef } from "react";
 import Link from "next/link";
 
 import { motion, AnimatePresence, HTMLMotionProps } from "motion/react";
@@ -8,11 +8,12 @@ import { motion, AnimatePresence, HTMLMotionProps } from "motion/react";
 import { icons } from "@/utils/icons";
 import Toggle from "@/components/Toggle";
 
-const HeaderCircle: React.FC<{
-  className?: string;
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
-  children: React.ReactNode;
-}> = ({ className, onClick, children, ...props }) => (
+const HeaderCircle: React.FC<ComponentPropsWithRef<"button">> = ({
+  className,
+  onClick,
+  children,
+  ...props
+}) => (
   <button
     className={`clickable circle-icon bg-neutral-200 dark:bg-neutral-850 h-12 w-12 ${className}`}
     onClick={onClick}
@@ -28,18 +29,17 @@ const HeaderArea: React.FC<HTMLMotionProps<"div">> = ({
   ...props
 }) => (
   <motion.div
-    className={`bg-neutral-200 dark:bg-neutral-850 fixed top-0 right-0 left-0 md:left-auto z-30 mt-19 ml-8 mr-8 p-4 rounded-lg ${className}`}
-    initial={{ opacity: 0, y: -15 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -15 }}
+    className={`bg-neutral-200 dark:bg-neutral-850 fixed top-0 right-0 left-0 md:left-auto z-30 mt-19 ml-8 mr-24 md:mr-8 p-4 rounded-lg ${className}
+    [--enter-x:15px] [--enter-y:0px] md:[--enter-x:0px] md:[--enter-y:-15px]`}
+    initial={{ opacity: 0, x: "var(--enter-x)", y: "var(--enter-y)" }}
+    animate={{ opacity: 1, x: 0, y: 0 }}
+    exit={{ opacity: 0, x: "var(--enter-x)", y: "var(--enter-y)" }}
     transition={{ duration: 0.1 }}
     {...props}
   >
     {children}
   </motion.div>
 );
-
-// TODO: responsive design
 
 const SettingArea: React.FC = () => {
   const getSelectedTheme = () => localStorage.getItem("theme") || "system";
@@ -143,64 +143,87 @@ const LoginArea: React.FC = () => {
 
 export default function Header() {
   const [openArea, setOpenArea] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const areaRef = useRef<HTMLDivElement | null>(null);
   const areaButtonRef = useRef<HTMLDivElement | null>(null);
+  const mobileMenuRef = useRef<HTMLButtonElement | null>(null);
+
+  const changeAreaStatus = (areaName: string | null) => {
+    setOpenArea(openArea !== areaName ? areaName : null);
+
+    // get TailwindCSS md breakpoint
+    const rootStyles = getComputedStyle(document.documentElement);
+    const mdBreakpoint = rootStyles.getPropertyValue("--breakpoint-md").trim();
+
+    const isMobile = window.matchMedia(`(max-width: ${mdBreakpoint})`).matches;
+
+    setMobileOpen(isMobile ? true : !openArea);
+  };
 
   useEffect(() => {
-    if (!openArea) return;
+    if (!openArea && !mobileOpen) return;
 
     const handlePointerDown = (e: PointerEvent) => {
-      const target = e.target as Node;
+      const target = e.target;
+      if (!(target instanceof Node)) return;
 
-      const clickedButtons = areaButtonRef.current?.contains(target);
-      const clickedArea = areaRef.current?.contains(target);
+      const clickedButtons = areaButtonRef.current?.contains(target) ?? false;
+      const clickedArea = areaRef.current?.contains(target) ?? false;
+      const clickedMobileMenu =
+        mobileMenuRef.current?.contains(target) ?? false;
 
-      if (!clickedButtons && !clickedArea) {
-        setOpenArea(null);
-      }
+      if (clickedButtons || clickedArea || clickedMobileMenu) return;
+
+      setOpenArea(null);
+      setMobileOpen(false);
     };
 
     document.addEventListener("pointerdown", handlePointerDown);
     return () => {
       document.removeEventListener("pointerdown", handlePointerDown);
     };
-  }, [openArea]);
+  }, [openArea, mobileOpen]);
 
   return (
     <div>
       <div
-        className="fixed top-0 left-0 right-0 z-30 px-8 pb-6 pt-5 flex flex-row items-center space-x-3 transition-colors duration-300
+        className="fixed top-0 left-0 right-0 z-30 px-8 pb-6 pt-5 flex flex-row items-center transition-colors duration-300
         before:absolute before:inset-0 before:-z-10 before:backdrop-blur-xs
         before:mask-[linear-gradient(to_bottom,black_65%,transparent)]"
       >
-        <Link href="/" className="font-bold text-4xl clickable">
-          MoAh
-        </Link>
-        <HeaderCircle
-          className="ml-2"
-          onClick={() => {
-            alert("Hello, World!");
-          }}
-        >
-          {icons.list}
-        </HeaderCircle>
-        <HeaderCircle>{icons.search}</HeaderCircle>
+        <div className="flex flex-row items-center space-x-3">
+          <Link href="/" className="font-bold text-4xl clickable">
+            MoAh
+          </Link>
+          <HeaderCircle
+            className="ml-2"
+            onClick={() => {
+              alert("Hello, World!");
+            }}
+          >
+            {icons.list}
+          </HeaderCircle>
+          <HeaderCircle>{icons.search}</HeaderCircle>
+        </div>
         <div className="flex-1" />
+        <HeaderCircle
+          className="md:hidden"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          ref={mobileMenuRef}
+        >
+          {icons.menu}
+        </HeaderCircle>
         <div
-          className="flex flex-row items-center space-x-3"
+          className={`${mobileOpen || openArea ? "flex fixed top-0 right-0 mt-19 mr-8" : "hidden"}
+          md:static md:m-0 md:flex md:flex-row flex-col justify-center items-center space-y-3 md:space-y-0 md:space-x-3
+          rounded-full md:bg-transparent transition-colors duration-300 backdrop-blur-xs md:backdrop-blur-none`}
           ref={areaButtonRef}
         >
           <HeaderCircle>{icons.help}</HeaderCircle>
-          <HeaderCircle
-            onClick={() =>
-              setOpenArea(openArea !== "setting" ? "setting" : null)
-            }
-          >
+          <HeaderCircle onClick={() => changeAreaStatus("setting")}>
             {icons.setting}
           </HeaderCircle>
-          <HeaderCircle
-            onClick={() => setOpenArea(openArea !== "login" ? "login" : null)}
-          >
+          <HeaderCircle onClick={() => changeAreaStatus("login")}>
             {icons.login}
           </HeaderCircle>
         </div>
