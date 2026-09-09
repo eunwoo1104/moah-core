@@ -1,5 +1,14 @@
-import { FaSearch, FaList, FaQuestion, FaCog, FaBars } from "react-icons/fa";
-import { FaArrowRightToBracket } from "react-icons/fa6";
+import {
+  FaSearch,
+  FaList,
+  FaQuestion,
+  FaCog,
+  FaBars,
+  FaMoon,
+} from "react-icons/fa";
+import { FaArrowRightToBracket, FaUser, FaUserTag } from "react-icons/fa6";
+import { HiMail } from "react-icons/hi";
+import { MdPassword } from "react-icons/md";
 
 export const icons = {
   search: <FaSearch />,
@@ -8,4 +17,9 @@ export const icons = {
   setting: <FaCog />,
   login: <FaArrowRightToBracket />,
   menu: <FaBars />,
+  theme: <FaMoon />,
+  email: <HiMail />,
+  password: <MdPassword />,
+  user: <FaUser />,
+  nick: <FaUserTag />,
 };

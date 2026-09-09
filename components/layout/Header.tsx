@@ -42,7 +42,9 @@ const HeaderArea: React.FC<HTMLMotionProps<"div">> = ({
 );
 
 const HelpArea: React.FC = () => (
-  <HeaderArea className="md:w-fit font-bold text-2xl text-center">soonTM</HeaderArea>
+  <HeaderArea className="md:w-fit font-bold text-2xl text-center">
+    soonTM
+  </HeaderArea>
 );
 
 const SettingArea: React.FC = () => {
@@ -69,7 +71,10 @@ const SettingArea: React.FC = () => {
 
   return (
     <HeaderArea className="md:w-64 space-y-2">
-      <p className="font-bold text-sm text-neutral-400">Theme Setting</p>
+      <div className="font-bold text-sm text-neutral-400 flex flex-row items-center space-x-1">
+        <div className="inline-block">{icons.theme}</div>
+        <p>Theme Setting</p>
+      </div>
       <div className="flex flex-row justify-between items-center">
         <p>Dark Mode</p>
         <Toggle
@@ -106,7 +111,10 @@ const LoginArea: React.FC = () => {
     <HeaderArea className="md:w-96">
       <form className="space-y-1" onSubmit={onSubmit}>
         <label>
-          Email
+          <div className="flex flex-row items-center space-x-0.5">
+            <div>{icons.email}</div>
+            <p>Email</p>
+          </div>
           <input
             name="email"
             type="email"
@@ -115,7 +123,10 @@ const LoginArea: React.FC = () => {
           />
         </label>
         <label>
-          Password
+          <div className="flex flex-row items-center space-x-0.5">
+            <div>{icons.password}</div>
+            <p>Password</p>
+          </div>
           <input
             name="password"
             type="password"
@@ -130,12 +141,12 @@ const LoginArea: React.FC = () => {
           <div className="md:flex-1" />
           <Link
             href="/user/register"
-            className="clickable dark:bg-neutral-800 rounded-lg py-1 w-full md:w-20 text-center"
+            className="clickable bg-neutral-100 dark:bg-neutral-800 rounded-lg py-1 w-full md:w-20 text-center"
           >
             Register
           </Link>
           <input
-            className="clickable dark:bg-neutral-800 rounded-lg py-1 w-full md:w-20 mb-2 md:mb-0"
+            className="clickable bg-neutral-100 dark:bg-neutral-800 rounded-lg py-1 w-full md:w-20 mb-2 md:mb-0"
             type="submit"
             value="Login"
           />
