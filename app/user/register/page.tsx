@@ -1,17 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { InferType } from "yup";
 
+import { RHFInput } from "@/components/form/RHFInput";
 import { sha256encrypt } from "@/utils/encryption/sha256";
+import { icons } from "@/utils/icons";
 import { codes } from "@/utils/response";
 import type { MoahResponse } from "@/utils/response";
-import { icons } from "@/utils/icons";
 import { clientUserRegistrationSchema } from "@/utils/validation";
-import { RHFInput } from "@/components/form/RHFInput";
 
 export default function Register() {
   const [submitDisabled, setSubmitDisabled] = useState<boolean>(false);

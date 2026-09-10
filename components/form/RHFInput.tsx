@@ -2,9 +2,9 @@
 
 import type {
   FieldErrors,
-  UseFormRegister,
   FieldValues,
   Path,
+  UseFormRegister,
 } from "react-hook-form";
 
 export function RHFInput<T extends FieldValues>({

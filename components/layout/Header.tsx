@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState, useRef, ComponentPropsWithRef } from "react";
+import { AnimatePresence, HTMLMotionProps, motion } from "motion/react";
 import Link from "next/link";
+import { ComponentPropsWithRef, useEffect, useRef, useState } from "react";
 
-import { motion, AnimatePresence, HTMLMotionProps } from "motion/react";
-
-import { icons } from "@/utils/icons";
 import Toggle from "@/components/Toggle";
+import { icons } from "@/utils/icons";
 
 const HeaderCircle: React.FC<ComponentPropsWithRef<"button">> = ({
   className,

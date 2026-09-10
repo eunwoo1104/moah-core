@@ -1,5 +1,4 @@
 import { NextRequest } from "next/server";
-
 import { ValidationError } from "yup";
 
 import database from "@/utils/database";
