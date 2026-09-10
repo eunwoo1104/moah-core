@@ -10,7 +10,7 @@ body {
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-neutral-850: oklch(23.5% 0 none)
+  --color-neutral-850: oklch(23.5% 0 none);
 }
 
 @layer base {
@@ -54,5 +54,9 @@ body {
 
   .content-mt {
     @apply mt-24;
+  }
+
+  .content-pt {
+    @apply pt-24;
   }
 }

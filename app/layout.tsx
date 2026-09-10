@@ -38,7 +38,7 @@ export default function RootLayout({
         {/* Header */}
         <Header />
         {/* Content */}
-        <div className="content-mt content-ml content-mr">{children}</div>
+        <div className="content-pt content-ml content-mr">{children}</div>
       </body>
     </html>
   );
