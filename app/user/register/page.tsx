@@ -6,6 +6,7 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { InferType } from "yup";
 
+import { MessageBox } from "@/components/MessageBox";
 import { RHFInput } from "@/components/form/RHFInput";
 import { sha256encrypt } from "@/utils/encryption/sha256";
 import { icons } from "@/utils/icons";
@@ -15,6 +16,7 @@ import { clientUserRegistrationSchema } from "@/utils/validation";
 
 export default function Register() {
   const [submitDisabled, setSubmitDisabled] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -48,8 +50,7 @@ export default function Register() {
       // TODO: show success message & open login menu
       router.push("/");
     } else {
-      // TODO: show error message better
-      alert(response.msg);
+      setErrorMsg(response.msg);
       setSubmitDisabled(false);
     }
   };
@@ -120,6 +121,16 @@ export default function Register() {
           icon={icons.nick}
         />
         {/* TODO: add ToS and Privacy Policy confirm */}
+        {errorMsg && (
+          <MessageBox
+            className="mt-5 clickable"
+            type="error"
+            title="Error while processing registration."
+            onClick={() => setErrorMsg(null)}
+          >
+            <p>{errorMsg}</p>
+          </MessageBox>
+        )}
         <input
           className="clickable bg-neutral-200 dark:bg-neutral-800 rounded-lg w-full py-3 mt-5"
           type="submit"
