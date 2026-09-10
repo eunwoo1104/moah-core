@@ -4,7 +4,7 @@ import { AnimatePresence, HTMLMotionProps, motion } from "motion/react";
 import Link from "next/link";
 import { ComponentPropsWithRef, useEffect, useRef, useState } from "react";
 
-import Toggle from "@/components/Toggle";
+import { Toggle } from "@/components/Toggle";
 import { icons } from "@/utils/icons";
 
 const HeaderCircle: React.FC<ComponentPropsWithRef<"button">> = ({

@@ -1,8 +1,96 @@
+"use client";
+
+import { useState } from "react";
+
+import { MessageBox } from "@/components/MessageBox";
+
 export default function UITest() {
+  const [boxType, setBoxType] = useState<"info" | "success" | "warn" | "error">(
+    "info",
+  );
+
   return (
     <div>
       <h1 className="font-bold text-4xl">Hello, World!</h1>
       <p>Example text</p>
+      <MessageBox
+        type={boxType}
+        title="Test Message Box"
+        className="my-3 hover:cursor-pointer"
+        onClick={() =>
+          setBoxType(
+            boxType === "info"
+              ? "success"
+              : boxType === "success"
+                ? "warn"
+                : boxType === "warn"
+                  ? "error"
+                  : "info",
+          )
+        }
+      >
+        <p>Click to change type (current: {boxType})</p>
+      </MessageBox>
+      <h1 className="font-bold text-4xl">MessageBox Color Palette</h1>
+      <p className="font-light text-neutral-400">
+        Imported from SamNet source code
+      </p>
+      <MessageBox
+        type="info"
+        title="Info: bg-cornflowerblue [#6495ED]"
+        className="my-1"
+      >
+        <p>text-blue-900 dark:text-blue-50</p>
+      </MessageBox>
+      <MessageBox
+        type="success"
+        title="Success: bg-green-400"
+        className="my-1 bg-green-400"
+      >
+        <p>text-green-900 dark:text-green-50</p>
+      </MessageBox>
+      <MessageBox type="warn" title="Warn: bg-orange-300" className="my-1">
+        <p>text-orange-900 dark:text-orange-50</p>
+      </MessageBox>
+      <MessageBox
+        type="error"
+        title="Error: bg-lightcoral [#F08080]"
+        className="my-1"
+      >
+        <p>text-red-900 dark:text-red-50</p>
+      </MessageBox>
+      <h1 className="font-bold text-2xl">Extra Color Palette</h1>
+      <MessageBox
+        type="none"
+        title="bg-blue-300"
+        className="my-1 bg-blue-300"
+      />
+      <MessageBox
+        type="none"
+        title="bg-blue-400"
+        className="my-1 bg-blue-400"
+      />
+      <MessageBox
+        type="none"
+        title="bg-blue-500"
+        className="my-1 bg-blue-500"
+      />
+      <MessageBox
+        type="none"
+        title="bg-rose-300"
+        className="my-1 bg-rose-300"
+      />
+      <MessageBox
+        type="none"
+        title="bg-rose-400"
+        className="my-1 bg-rose-400"
+      />
+      <MessageBox
+        type="none"
+        title="bg-springgreen [#00FF7F]"
+        className="my-1 bg-[#00FF7F]"
+      />
+      <h1 className="font-bold text-4xl">Very Long Paragraph</h1>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis dictum
         auctor erat et eleifend. Pellentesque non orci vehicula, molestie nisi

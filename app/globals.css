@@ -11,6 +11,8 @@ body {
 
 @theme {
   --color-neutral-850: oklch(23.5% 0 none);
+  --color-lightcoral: #F08080;
+  --color-cornflowerblue: #6495ED;
 }
 
 @layer base {

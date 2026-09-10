@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "motion/react";
 
-function Toggle({ value, onClick, disabled }: ToggleProps) {
+export function Toggle({ value, onClick, disabled }: ToggleProps) {
   return (
     <motion.button
       type="button"
@@ -30,5 +30,3 @@ interface ToggleProps {
   onClick: () => void;
   disabled?: boolean;
 }
-
-export default Toggle;
