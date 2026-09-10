@@ -2,50 +2,41 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { InferType } from "yup";
 
 import { sha256encrypt } from "@/utils/encryption/sha256";
 import { codes } from "@/utils/response";
 import type { MoahResponse } from "@/utils/response";
 import { icons } from "@/utils/icons";
-import { clientRegistrationSchema } from "@/utils/validation";
-import { ValidationError } from "yup";
+import { clientUserRegistrationSchema } from "@/utils/validation";
+import { RHFInput } from "@/components/form/RHFInput";
 
 export default function Register() {
   const [submitDisabled, setSubmitDisabled] = useState<boolean>(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: "onChange",
+    reValidateMode: "onChange",
+    resolver: yupResolver(clientUserRegistrationSchema),
+  });
   const router = useRouter();
 
-  const onSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit: SubmitHandler<
+    InferType<typeof clientUserRegistrationSchema>
+  > = async (data) => {
     setSubmitDisabled(true);
 
-    let validated;
-    try {
-      validated = await clientRegistrationSchema.validate({
-        email: e.target.email.value,
-        password: e.target.password.value,
-        username: e.target.username.value,
-        nickname: e.target.nickname.value,
-      });
-    } catch (e) {
-      if (e instanceof ValidationError) {
-        // TODO: validation ui action
-        alert(e.message);
-      } else {
-        alert(
-          "Error while validating data. Please refresh the page and retry.",
-        );
-      }
-      setSubmitDisabled(false);
-      return;
-    }
-    if (validated.password !== e.target.confirmPassword.value) return;
-
-    const encryptedPassword = await sha256encrypt(e.target.password.value);
+    const encryptedPassword = await sha256encrypt(data.password);
     const requestBody = {
-      email: validated.email,
+      email: data.email,
       password: encryptedPassword,
-      username: validated.username,
-      nickname: validated.nickname,
+      username: data.username,
+      nickname: data.nickname,
     };
 
     const res = await fetch("/api/v1/user/register", {
@@ -71,79 +62,66 @@ export default function Register() {
       <p className="font-light text-neutral-400 pb-4">
         Need help? Contact service manager.
       </p>
-      <form className="space-y-2" onSubmit={onSubmit} noValidate={true}>
-        <label>
-          <div className="flex flex-row items-center space-x-0.5">
-            <div>{icons.email}</div>
-            <p>
-              Email <span className="text-red-400">*</span>
-            </p>
-          </div>
-          <input
-            name="email"
-            type="email"
-            placeholder="user@example.com"
-            autoComplete="email"
-            required={true}
-          />
-        </label>
-        <label>
-          <div className="flex flex-row items-center space-x-0.5">
-            <div>{icons.password}</div>
-            <p>
-              Password <span className="text-red-400">*</span>
-            </p>
-          </div>
-          <input
-            name="password"
-            type="password"
-            placeholder="password"
-            autoComplete="new-password"
-            required={true}
-          />
-        </label>
-        <label>
-          <div className="flex flex-row items-center space-x-0.5">
-            <div>{icons.password}</div>
-            <p>
-              Confirm Password <span className="text-red-400">*</span>
-            </p>
-          </div>
-          <input
-            name="confirmPassword"
-            type="password"
-            placeholder="password"
-            required={true}
-          />
-        </label>
-        <label>
-          <div className="flex flex-row items-center space-x-0.5">
-            <div>{icons.user}</div>
-            <p>
-              Username <span className="text-red-400">*</span>
-            </p>
-          </div>
-          <input
-            name="username"
-            type="text"
-            placeholder="@example"
-            required={true}
-          />
-        </label>
-        <label>
-          <div className="flex flex-row items-center space-x-0.5">
-            <div>{icons.nick}</div>
-            <p>Display Name (Nickname)</p>
-          </div>
-          <input
-            name="nickname"
-            type="text"
-            placeholder="nickname (optional)"
-          />
-        </label>
+      <form
+        className="space-y-2"
+        onSubmit={handleSubmit(onSubmit)}
+        noValidate={true}
+      >
+        <RHFInput
+          label="Email"
+          name="email"
+          type="email"
+          register={register}
+          errors={errors}
+          required={true}
+          placeholder="user@example.com"
+          autoComplete="email"
+          icon={icons.email}
+        />
+        <RHFInput
+          label="Password"
+          name="password"
+          type="password"
+          register={register}
+          errors={errors}
+          required={true}
+          placeholder="password"
+          autoComplete="new-password"
+          icon={icons.password}
+        />
+        <RHFInput
+          label="Confirm Password"
+          name="confirmPassword"
+          type="password"
+          register={register}
+          errors={errors}
+          required={true}
+          placeholder="password"
+          icon={icons.password}
+        />
+        <RHFInput
+          label="Username"
+          name="username"
+          type="text"
+          register={register}
+          errors={errors}
+          required={true}
+          placeholder="displays as @example"
+          icon={icons.user}
+        />
+        <RHFInput
+          label="Display Name (Nickname)"
+          name="nickname"
+          type="text"
+          register={register}
+          errors={errors}
+          required={false}
+          placeholder="nickname (optional)"
+          icon={icons.nick}
+        />
         {/* TODO: add ToS and Privacy Policy confirm */}
         <input
-          className="clickable bg-neutral-200 dark:bg-neutral-800 rounded-lg w-full py-3"
+          className="clickable bg-neutral-200 dark:bg-neutral-800 rounded-lg w-full py-3 mt-5"
           type="submit"
           value="Register"
           disabled={submitDisabled}
