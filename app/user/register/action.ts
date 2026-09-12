@@ -1,25 +1,30 @@
-import { NextRequest } from "next/server";
-import { ValidationError } from "yup";
+"use server";
+
+import { InferType, ValidationError } from "yup";
 
 import database from "@/utils/database";
 import { argon2encrypt } from "@/utils/encryption/argon2";
-import { builResponse, codes } from "@/utils/response";
+import { MoahResponse, codes } from "@/utils/response";
 import { userRegistrationSchema } from "@/utils/validation";
 
-export async function POST(req: NextRequest) {
+export async function registerAction(
+  formData: InferType<typeof userRegistrationSchema>,
+): Promise<MoahResponse<string[] | null>> {
   let data;
   try {
-    data = await userRegistrationSchema.validate(await req.json());
+    data = await userRegistrationSchema.validate(formData);
   } catch (e) {
     if (e instanceof ValidationError) {
-      return builResponse(
-        400,
-        codes.validError,
-        "Request validation failed",
-        e.errors,
-      );
+      return {
+        code: codes.validError,
+        msg: "Request validation failed",
+        content: e.errors,
+      };
     } else {
-      return builResponse(500, codes.unknown, "Unknown error");
+      return {
+        code: codes.unknown,
+        msg: "Unknown error",
+      };
     }
   }
 
@@ -27,7 +32,10 @@ export async function POST(req: NextRequest) {
     .select("email")
     .where("email", data.email);
   if (emailExists.length !== 0)
-    return builResponse(400, codes.validError, "Email already exists");
+    return {
+      code: codes.validError,
+      msg: "Email already exists",
+    };
 
   const encrypted = await argon2encrypt(data.password);
 
@@ -41,5 +49,5 @@ export async function POST(req: NextRequest) {
   await database("user").insert(insertData);
 
   // TODO: better response message and/or data
-  return builResponse(200, codes.ok, "Success");
+  return { code: codes.ok, msg: "Success" };
 }

@@ -11,8 +11,9 @@ import { RHFInput } from "@/components/form/RHFInput";
 import { sha256encrypt } from "@/utils/encryption/sha256";
 import { icons } from "@/utils/icons";
 import { codes } from "@/utils/response";
-import type { MoahResponse } from "@/utils/response";
 import { clientUserRegistrationSchema } from "@/utils/validation";
+
+import { registerAction } from "./action";
 
 export default function Register() {
   const [submitDisabled, setSubmitDisabled] = useState<boolean>(false);
@@ -41,11 +42,7 @@ export default function Register() {
       nickname: data.nickname,
     };
 
-    const res = await fetch("/api/v1/user/register", {
-      method: "POST",
-      body: JSON.stringify(requestBody),
-    });
-    const response: MoahResponse<null> = await res.json();
+    const response = await registerAction(requestBody);
     if (response.code == codes.ok) {
       // TODO: show success message & open login menu
       router.push("/");
