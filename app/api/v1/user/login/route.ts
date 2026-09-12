@@ -1,10 +1,9 @@
-import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 import { ValidationError } from "yup";
 
+import { createNewSession } from "@/utils/actions";
 import database from "@/utils/database";
 import { argon2verify } from "@/utils/encryption/argon2";
-import { createJWT } from "@/utils/jwt";
 import { builResponse, codes } from "@/utils/response";
 import { PartialUser, User } from "@/utils/types";
 import { userLoginSchema } from "@/utils/validation";
@@ -15,14 +14,12 @@ export async function POST(req: NextRequest) {
     data = await userLoginSchema.validate(await req.json());
   } catch (e) {
     if (e instanceof ValidationError) {
-      return builResponse(
-        400,
-        codes.validError,
-        "Request validation failed",
-        e.errors,
-      );
+      return builResponse(400, codes.validError, {
+        msg: "Request validation failed",
+        content: e.errors,
+      });
     } else {
-      return builResponse(500, codes.unknown, "Unknown error");
+      return builResponse(500, codes.unknown, { msg: "Unknown error" });
     }
   }
 
@@ -30,27 +27,13 @@ export async function POST(req: NextRequest) {
     .select()
     .where("email", data.email);
   if (userData.length === 0)
-    return builResponse(404, codes.notFound, "Email not registered");
+    return builResponse(404, codes.notFound, { msg: "Email not registered" });
 
   const matched = await argon2verify(userData[0].password, data.password);
-  if (!matched) return builResponse(403, codes.authError, "Invalid password");
+  if (!matched)
+    return builResponse(403, codes.authError, { msg: "Invalid password" });
 
-  const accessToken = await createJWT({ id: userData[0].id }, "5m");
-  const refreshToken = await createJWT({ id: userData[0].id }, "7d");
-
-  const cookieStore = await cookies();
-  cookieStore.set("accessToken", accessToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "lax",
-    path: "/",
-  });
-  cookieStore.set("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "lax",
-    path: "/",
-  });
+  await createNewSession(userData[0].id);
 
   const user: PartialUser = {
     email: userData[0].email,
@@ -61,5 +44,5 @@ export async function POST(req: NextRequest) {
     flags: userData[0].flags,
   };
 
-  return builResponse(200, codes.ok, "Success", user);
+  return builResponse(200, codes.ok, { content: user });
 }

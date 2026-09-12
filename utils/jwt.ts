@@ -18,8 +18,11 @@ export function createJWT(
     .sign(jwtSecret);
 }
 
-export function verifyJWT(token: string) {
+export async function verifyJWT(token: string) {
   if (!jwtSecret) throw new Error("JWT secret not provided");
 
-  return jwtVerify(token, jwtSecret, { algorithms: [algorithm] });
+  const { payload } = await jwtVerify(token, jwtSecret, {
+    algorithms: [algorithm],
+  });
+  return payload;
 }

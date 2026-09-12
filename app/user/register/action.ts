@@ -48,6 +48,5 @@ export async function registerAction(
 
   await database("user").insert(insertData);
 
-  // TODO: better response message and/or data
-  return { code: codes.ok, msg: "Success" };
+  return { code: codes.ok };
 }

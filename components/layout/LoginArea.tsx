@@ -50,7 +50,7 @@ export function LoginArea() {
 
       sessionCtx.setUser(response.content);
     } else {
-      setErrorMsg(response.msg);
+      setErrorMsg(response.msg as string);
       setSubmitDisabled(false);
     }
   };

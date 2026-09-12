@@ -47,7 +47,7 @@ export default function Register() {
       // TODO: show success message & open login menu
       router.push("/");
     } else {
-      setErrorMsg(response.msg);
+      setErrorMsg(response.msg as string);
       setSubmitDisabled(false);
     }
   };
