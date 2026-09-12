@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 
 import Header from "@/components/layout/Header";
+import { SessionProvider } from "@/components/provider/SessionProvider";
 
 import "./globals.css";
 
@@ -35,10 +36,12 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-white dark:bg-neutral-900 dark:text-white w-full min-h-screen font-normal text-base">
-        {/* Header */}
-        <Header />
-        {/* Content */}
-        <div className="content-pt content-ml content-mr">{children}</div>
+        <SessionProvider>
+          {/* Header */}
+          <Header />
+          {/* Content */}
+          <div className="content-pt content-ml content-mr">{children}</div>
+        </SessionProvider>
       </body>
     </html>
   );

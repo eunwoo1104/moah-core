@@ -1,44 +1,17 @@
 "use client";
 
-import { AnimatePresence, HTMLMotionProps, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import Link from "next/link";
-import { ComponentPropsWithRef, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
-import { Toggle } from "@/components/Toggle";
+import { SessionContext } from "@/utils/contexts";
 import { icons } from "@/utils/icons";
 
-const HeaderCircle: React.FC<ComponentPropsWithRef<"button">> = ({
-  className,
-  onClick,
-  children,
-  ...props
-}) => (
-  <button
-    className={`clickable circle-icon bg-neutral-200 dark:bg-neutral-850 h-12 w-12 ${className}`}
-    onClick={onClick}
-    {...props}
-  >
-    {children}
-  </button>
-);
-
-const HeaderArea: React.FC<HTMLMotionProps<"div">> = ({
-  className,
-  children,
-  ...props
-}) => (
-  <motion.div
-    className={`bg-neutral-200 dark:bg-neutral-850 fixed top-0 right-0 left-0 md:left-auto z-30 mt-19 ml-8 mr-24 md:mr-8 p-4 rounded-lg ${className}
-    [--enter-x:15px] [--enter-y:0px] md:[--enter-x:0px] md:[--enter-y:-15px]`}
-    initial={{ opacity: 0, x: "var(--enter-x)", y: "var(--enter-y)" }}
-    animate={{ opacity: 1, x: 0, y: 0 }}
-    exit={{ opacity: 0, x: "var(--enter-x)", y: "var(--enter-y)" }}
-    transition={{ duration: 0.1 }}
-    {...props}
-  >
-    {children}
-  </motion.div>
-);
+import { HeaderArea } from "./HeaderArea";
+import { HeaderCircle } from "./HeaderCircle";
+import { LoginArea } from "./LoginArea";
+import { SettingArea } from "./SettingArea";
+import { UserArea } from "./UserArea";
 
 const HelpArea: React.FC = () => (
   <HeaderArea className="md:w-fit font-bold text-2xl text-center">
@@ -46,121 +19,13 @@ const HelpArea: React.FC = () => (
   </HeaderArea>
 );
 
-const SettingArea: React.FC = () => {
-  const getSelectedTheme = () => localStorage.getItem("theme") || "system";
-  const getSystemTheme = () =>
-    window.matchMedia("(prefers-color-scheme: dark)")?.matches
-      ? "dark"
-      : "light";
-
-  const [selectedTheme, setSelectedTheme] =
-    useState<string>(getSelectedTheme());
-
-  useEffect(() => {
-    if (selectedTheme !== "system")
-      localStorage.setItem("theme", selectedTheme);
-    else localStorage.setItem("theme", "system");
-    document.documentElement.classList.toggle(
-      "dark",
-      selectedTheme !== "system"
-        ? selectedTheme === "dark"
-        : getSystemTheme() === "dark",
-    );
-  }, [selectedTheme]);
-
-  return (
-    <HeaderArea className="md:w-64 space-y-2">
-      <div className="font-bold text-sm text-neutral-400 flex flex-row items-center space-x-1">
-        <div className="inline-block">{icons.theme}</div>
-        <p>Theme Setting</p>
-      </div>
-      <div className="flex flex-row justify-between items-center">
-        <p>Dark Mode</p>
-        <Toggle
-          value={
-            selectedTheme === "dark" ||
-            (selectedTheme === "system" && getSystemTheme() === "dark")
-          }
-          onClick={() =>
-            setSelectedTheme(selectedTheme === "light" ? "dark" : "light")
-          }
-          disabled={selectedTheme === "system"}
-        />
-      </div>
-      <div className="flex flex-row justify-between items-center">
-        <p>Use System Theme</p>
-        <Toggle
-          value={selectedTheme === "system"}
-          onClick={() =>
-            setSelectedTheme(
-              selectedTheme === "system" ? getSystemTheme() : "system",
-            )
-          }
-        />
-      </div>
-    </HeaderArea>
-  );
-};
-
-const LoginArea: React.FC = () => {
-  const onSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
-  };
-  return (
-    <HeaderArea className="md:w-96">
-      <form className="space-y-1" onSubmit={onSubmit}>
-        <label>
-          <div className="flex flex-row items-center space-x-0.5">
-            <div>{icons.email}</div>
-            <p>Email</p>
-          </div>
-          <input
-            name="email"
-            type="email"
-            placeholder="user@example.com"
-            autoComplete="email"
-          />
-        </label>
-        <label>
-          <div className="flex flex-row items-center space-x-0.5">
-            <div>{icons.password}</div>
-            <p>Password</p>
-          </div>
-          <input
-            name="password"
-            type="password"
-            placeholder="password"
-            autoComplete="current-password"
-          />
-        </label>
-        <div className="flex flex-col-reverse md:flex-row items-center mt-2 space-x-0 md:space-x-2 space-y-1 md:space-y-0">
-          <div className="flex flex-row items-center space-x-2 text-neutral-400">
-            <button className="clickable">Reset Password</button>
-          </div>
-          <div className="md:flex-1" />
-          <Link
-            href="/user/register"
-            className="clickable bg-neutral-100 dark:bg-neutral-800 rounded-lg py-1 w-full md:w-20 text-center"
-          >
-            Register
-          </Link>
-          <input
-            className="clickable bg-neutral-100 dark:bg-neutral-800 rounded-lg py-1 w-full md:w-20 mb-2 md:mb-0"
-            type="submit"
-            value="Login"
-          />
-        </div>
-      </form>
-    </HeaderArea>
-  );
-};
-
 export default function Header() {
   const [openArea, setOpenArea] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const areaRef = useRef<HTMLDivElement | null>(null);
   const areaButtonRef = useRef<HTMLDivElement | null>(null);
   const mobileMenuRef = useRef<HTMLButtonElement | null>(null);
+  const sessionCtx = useContext(SessionContext);
 
   const changeAreaStatus = (areaName: string | null) => {
     setOpenArea(openArea !== areaName ? areaName : null);
@@ -241,7 +106,11 @@ export default function Header() {
             {icons.setting}
           </HeaderCircle>
           <HeaderCircle onClick={() => changeAreaStatus("login")}>
-            {icons.login}
+            {
+              sessionCtx?.user
+                ? icons.user
+                : icons.login /* TODO: show avatar if avatar is set */
+            }
           </HeaderCircle>
         </div>
       </div>
@@ -252,7 +121,11 @@ export default function Header() {
           ) : openArea === "setting" ? (
             <SettingArea />
           ) : openArea === "login" ? (
-            <LoginArea />
+            sessionCtx?.user ? (
+              <UserArea />
+            ) : (
+              <LoginArea />
+            )
           ) : null}
         </AnimatePresence>
       </div>

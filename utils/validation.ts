@@ -2,12 +2,12 @@ import * as Yup from "yup";
 
 export const userRegistrationSchema = Yup.object({
   email: Yup.string()
-    .email()
-    .max(128, "Email too long.")
+    .email("Please provide a valid email address.")
+    .max(128, "Email is too long.")
     .required("Missing email."),
   password: Yup.string()
     .required("Missing password.")
-    .length(64, "Invalid password encyption."),
+    .length(64, "Invalid password encryption."),
   username: Yup.string().required("Missing username."),
   nickname: Yup.string().optional(),
 });
@@ -25,4 +25,22 @@ export const clientUserRegistrationSchema = Yup.object({
     .required("Confirm Password is required"),
   username: Yup.string().required("Username is required."),
   nickname: Yup.string().optional(),
+});
+
+export const userLoginSchema = Yup.object({
+  email: Yup.string()
+    .email("Please provide a valid email address.")
+    .max(128, "Email is too long.")
+    .required("Missing email."),
+  password: Yup.string()
+    .required("Missing password.")
+    .length(64, "Invalid password encryption."),
+});
+
+export const clientUserLoginSchema = Yup.object({
+  email: Yup.string()
+    .email("Please enter a valid email address.")
+    .max(128, "Email is too long.")
+    .required("Email is required."),
+  password: Yup.string().required("Password is required."),
 });

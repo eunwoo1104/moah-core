@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 
-export function builResponse(
+export function builResponse<T>(
   status: number,
   code: string,
   msg: string,
-  content?: object,
-): NextResponse<MoahResponse> {
-  const respData: MoahResponse = { code: code, msg: msg };
+  content?: T,
+): NextResponse {
+  const respData: MoahResponse<T> = { code: code, msg: msg };
   if (content) {
     respData.content = content;
   }
@@ -17,10 +17,12 @@ export const codes = {
   ok: "OK",
   unknown: "UNKNOWN_ERROR",
   validError: "VALIDATION_ERROR",
+  authError: "AUTHENTICATION_ERROR",
+  notFound: "NOT_FOUND",
 };
 
-export interface MoahResponse {
+export interface MoahResponse<T> {
   code: string;
-  content?: object;
+  content?: T;
   msg: string;
 }

@@ -45,7 +45,7 @@ export default function Register() {
       method: "POST",
       body: JSON.stringify(requestBody),
     });
-    const response: MoahResponse = await res.json();
+    const response: MoahResponse<null> = await res.json();
     if (response.code == codes.ok) {
       // TODO: show success message & open login menu
       router.push("/");

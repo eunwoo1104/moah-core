@@ -1,4 +1,5 @@
 import knex from "knex";
+import "server-only";
 
 export default knex({
   client: "mysql2",
