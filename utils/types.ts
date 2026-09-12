@@ -12,6 +12,17 @@ export interface User extends PartialUser {
   password: string;
 }
 
+export interface UserTable {
+  id: number;
+  email: string;
+  password: string;
+  username: string;
+  nickname: string | null;
+  avatar: string | null;
+  created_at: Date | null;
+  flags: number;
+}
+
 export enum UserFlags {
   NONE = 0,
   OPERATOR = 1 << 0,

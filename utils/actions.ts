@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 import database from "@/utils/database";
 import { createJWT, verifyJWT } from "@/utils/jwt";
 import { MoahResponse, codes } from "@/utils/response";
-import { PartialUser } from "@/utils/types";
+import { PartialUser, UserTable } from "@/utils/types";
 
 export async function createNewSession(userId: number) {
   const accessToken = await createJWT({ id: userId }, "5m");
@@ -44,11 +44,20 @@ export async function getCurrentUser(): Promise<
 
   if (!tokenData) return { code: codes.sessionInvalid, msg: "Session invalid" };
 
-  const data = await database("user")
+  const data = await database<UserTable>("user")
     .select("email", "username", "nickname", "avatar", "created_at", "flags")
     .where("id", tokenData.id as number);
 
   if (!data) return { code: codes.notFound }; // This should not happen tho
 
-  return { code: codes.ok, content: data[0] };
+  const user = {
+    email: data[0].email,
+    username: data[0].username,
+    nickname: data[0].nickname,
+    avatar: data[0].avatar,
+    createdAt: data[0].created_at,
+    flags: data[0].flags,
+  };
+
+  return { code: codes.ok, content: user };
 }

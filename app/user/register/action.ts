@@ -5,6 +5,7 @@ import { InferType, ValidationError } from "yup";
 import database from "@/utils/database";
 import { argon2encrypt } from "@/utils/encryption/argon2";
 import { MoahResponse, codes } from "@/utils/response";
+import { UserTable } from "@/utils/types";
 import { userRegistrationSchema } from "@/utils/validation";
 
 export async function registerAction(
@@ -28,7 +29,7 @@ export async function registerAction(
     }
   }
 
-  const emailExists = await database("user")
+  const emailExists = await database<UserTable>("user")
     .select("email")
     .where("email", data.email);
   if (emailExists.length !== 0)

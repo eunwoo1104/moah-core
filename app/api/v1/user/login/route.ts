@@ -5,7 +5,7 @@ import { createNewSession } from "@/utils/actions";
 import database from "@/utils/database";
 import { argon2verify } from "@/utils/encryption/argon2";
 import { builResponse, codes } from "@/utils/response";
-import { PartialUser, User } from "@/utils/types";
+import { PartialUser, UserTable } from "@/utils/types";
 import { userLoginSchema } from "@/utils/validation";
 
 export async function POST(req: NextRequest) {
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const userData = await database<User>("user")
+  const userData = await database<UserTable>("user")
     .select()
     .where("email", data.email);
   if (userData.length === 0)
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     username: userData[0].username,
     nickname: userData[0].nickname,
     avatar: userData[0].avatar,
-    createdAt: userData[0].createdAt,
+    createdAt: userData[0].created_at,
     flags: userData[0].flags,
   };
 
