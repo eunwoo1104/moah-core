@@ -1,11 +1,19 @@
+"use client";
+
 import { useContext } from "react";
 
 import { HeaderArea } from "@/components/header/HeaderArea";
+import { invalidateSession } from "@/utils/actions";
 import { SessionContext } from "@/utils/contexts";
 import { icons } from "@/utils/icons";
 
 export function UserArea() {
   const sessionCtx = useContext(SessionContext);
+
+  const logoutAction = async () => {
+    await invalidateSession();
+    sessionCtx?.setUser(null);
+  };
 
   if (!sessionCtx?.user) {
     return (
@@ -26,7 +34,10 @@ export function UserArea() {
           <p>@{sessionCtx.user.username}</p>
         </div>
       </div>
-      <button className="clickable bg-neutral-100 dark:bg-neutral-800 rounded-lg py-1 w-full text-center mt-2">
+      <button
+        className="clickable bg-neutral-100 dark:bg-neutral-800 rounded-lg py-1 w-full text-center mt-2"
+        onClick={logoutAction}
+      >
         Logout
       </button>
     </HeaderArea>

@@ -5,7 +5,7 @@ import { PartialUser } from "@/utils/types";
 
 interface SessionContextInterface {
   user: PartialUser | null;
-  setUser: (session: PartialUser) => void;
+  setUser: (session: PartialUser | null) => void;
 }
 
 interface GlobalMessageContextInterface {

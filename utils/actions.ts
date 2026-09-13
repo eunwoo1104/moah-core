@@ -5,7 +5,7 @@ import { cookies, headers } from "next/headers";
 import database from "@/utils/database";
 import { sha256encrypt } from "@/utils/encryption/sha256";
 import { createJWT } from "@/utils/jwt";
-import { getDeviceIdentifier } from "@/utils/request";
+import { deleteSessionCookies, getDeviceIdentifier } from "@/utils/request";
 import { MoahResponse, codes } from "@/utils/response";
 import { PartialUser, SessionTable, UserTable } from "@/utils/types";
 
@@ -37,6 +37,18 @@ export async function createNewSession(userId: number) {
   });
 
   // TODO: cleanup too old sessions
+}
+
+export async function invalidateSession() {
+  const cookieStore = await cookies();
+  const refreshToken = cookieStore.get("refreshToken");
+  if (refreshToken) {
+    const hashed = await sha256encrypt(refreshToken.value);
+    await database<SessionTable>("session")
+      .delete()
+      .where("refresh_token", hashed);
+  }
+  deleteSessionCookies(cookieStore);
 }
 
 export async function getCurrentUser(): Promise<
