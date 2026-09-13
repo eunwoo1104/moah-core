@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 
-import Header from "@/components/layout/Header";
+import Header from "@/components/header/Header";
 import { GlobalMessageProvider } from "@/components/provider/GlobalMessageProvider";
 import { SessionProvider } from "@/components/provider/SessionProvider";
 

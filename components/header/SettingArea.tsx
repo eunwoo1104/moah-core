@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { Toggle } from "@/components/Toggle";
-import { HeaderArea } from "@/components/layout/HeaderArea";
+import { HeaderArea } from "@/components/header/HeaderArea";
 import { icons } from "@/utils/icons";
 
 export function SettingArea() {

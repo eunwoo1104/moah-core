@@ -1,6 +1,6 @@
 import { useContext } from "react";
 
-import { HeaderArea } from "@/components/layout/HeaderArea";
+import { HeaderArea } from "@/components/header/HeaderArea";
 import { SessionContext } from "@/utils/contexts";
 import { icons } from "@/utils/icons";
 
