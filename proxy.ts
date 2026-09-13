@@ -46,13 +46,15 @@ export async function proxy(req: NextRequest) {
       // TODO: in this case JWT secret could be compromised or just whole session was reset, so should add handler for these cases
       deleteSessionCookies(cookieStore);
       return;
-    } else if (
+    }
+
+    await database<SessionTable>("session")
+      .delete()
+      .where({ refresh_token: hashedRefreshToken });
+    if (
       savedSession[0].device_identifier != (await sha256encrypt(devIdentifier))
     ) {
       // in this case refresh token is stolen
-      await database<SessionTable>("session")
-        .delete()
-        .where({ refresh_token: hashedRefreshToken });
       deleteSessionCookies(cookieStore);
       return;
     }
@@ -61,6 +63,7 @@ export async function proxy(req: NextRequest) {
     await createNewSession(savedSession[0].user);
     sessionUser = savedSession[0].user;
   } else sessionUser = sessionRes.id as number;
+  // TODO: should check whether session is from valid device
 
   if (sessionUser !== null) {
     headers.set("MoAh-Session-User", sessionUser.toString());
