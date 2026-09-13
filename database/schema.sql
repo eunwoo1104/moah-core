@@ -14,8 +14,9 @@ CREATE TABLE IF NOT EXISTS user (
 );
 
 CREATE TABLE IF NOT EXISTS session (
-    refresh_token VARCHAR(255) UNIQUE,
+    refresh_token CHAR(64) UNIQUE,
     user INT UNSIGNED,
-    device_identifier VARCHAR(255),
+    device_identifier CHAR(64),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE
 );

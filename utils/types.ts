@@ -31,3 +31,10 @@ export enum UserFlags {
 export interface Session {
   token: string;
 }
+
+export interface SessionTable {
+  refresh_token: string;
+  user: number;
+  device_identifier: string;
+  created_at: Date | null;
+}

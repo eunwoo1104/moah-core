@@ -1,12 +1,13 @@
 "use server";
 
-import { JWTExpired } from "jose/errors";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 import database from "@/utils/database";
-import { createJWT, verifyJWT } from "@/utils/jwt";
+import { sha256encrypt } from "@/utils/encryption/sha256";
+import { createJWT } from "@/utils/jwt";
+import { getDeviceIdentifier } from "@/utils/request";
 import { MoahResponse, codes } from "@/utils/response";
-import { PartialUser, UserTable } from "@/utils/types";
+import { PartialUser, SessionTable, UserTable } from "@/utils/types";
 
 export async function createNewSession(userId: number) {
   const accessToken = await createJWT({ id: userId }, "5m");
@@ -26,27 +27,40 @@ export async function createNewSession(userId: number) {
     path: "/",
   });
 
-  // TODO: store these data to database
+  const reqHeaders = await headers();
+  const devIdent = getDeviceIdentifier(reqHeaders);
+
+  await database<SessionTable>("session").insert({
+    refresh_token: await sha256encrypt(refreshToken),
+    user: userId,
+    device_identifier: await sha256encrypt(devIdent),
+  });
+
+  // TODO: cleanup too old sessions
 }
 
 export async function getCurrentUser(): Promise<
   MoahResponse<PartialUser | null>
 > {
+  const reqHeaders = await headers();
+  /*
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken");
 
   if (!accessToken)
     return { code: codes.sessionExpired, msg: "Session expired" };
 
-  const tokenData = await verifyJWT(accessToken?.value).catch((e) => {
-    if (!(e instanceof JWTExpired)) console.error(e);
-  });
+  const tokenData = await verifyJWT(accessToken?.value);
 
   if (!tokenData) return { code: codes.sessionInvalid, msg: "Session invalid" };
+  */
+
+  const userId = reqHeaders.get("MoAh-Session-User");
+  if (!userId) return { code: codes.sessionInvalid, msg: "Session invalid" };
 
   const data = await database<UserTable>("user")
     .select("email", "username", "nickname", "avatar", "created_at", "flags")
-    .where("id", tokenData.id as number);
+    .where("id", userId);
 
   if (!data) return { code: codes.notFound }; // This should not happen tho
 

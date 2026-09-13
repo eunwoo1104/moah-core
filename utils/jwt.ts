@@ -1,4 +1,5 @@
 import { JWTPayload, SignJWT, jwtVerify } from "jose";
+import { JWTExpired } from "jose/errors";
 import "server-only";
 
 const algorithm = process.env.JWT_ALGORITHM as string | "HS256";
@@ -23,6 +24,10 @@ export async function verifyJWT(token: string) {
 
   const { payload } = await jwtVerify(token, jwtSecret, {
     algorithms: [algorithm],
+  }).catch((e) => {
+    // TODO: should process errors gracefully later
+    if (!(e instanceof JWTExpired)) console.error(e);
+    return { payload: null };
   });
   return payload;
 }
