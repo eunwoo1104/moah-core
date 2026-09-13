@@ -36,7 +36,7 @@ export function MessageBox({
   );
 }
 
-interface MessageBoxProps extends React.HTMLProps<HTMLDivElement> {
+export interface MessageBoxProps extends React.HTMLProps<HTMLDivElement> {
   type: "info" | "success" | "warn" | "error" | "none";
   title: string;
   titleClassName?: string;
