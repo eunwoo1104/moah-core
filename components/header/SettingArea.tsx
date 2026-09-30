@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 
 import { Toggle } from "@/components/Toggle";
-import { HeaderArea } from "@/components/header/HeaderArea";
 import { icons } from "@/utils/icons";
+
+import { HeaderArea } from "./HeaderArea";
 
 export function SettingArea() {
   const getSelectedTheme = () => localStorage.getItem("theme") || "system";

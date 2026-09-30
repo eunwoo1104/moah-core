@@ -2,10 +2,11 @@
 
 import { useContext } from "react";
 
-import { HeaderArea } from "@/components/header/HeaderArea";
 import { invalidateSession } from "@/utils/actions";
 import { SessionContext } from "@/utils/contexts";
 import { icons } from "@/utils/icons";
+
+import { HeaderArea } from "./HeaderArea";
 
 export function UserArea() {
   const sessionCtx = useContext(SessionContext);
