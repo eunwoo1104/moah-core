@@ -3,6 +3,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, useWatch } from "react-hook-form";
 
+import { ImagePreview } from "@/components/ImagePreview";
 import { clientMediaUploadSchema } from "@/utils/validation";
 
 export default function MediaUpload() {
@@ -21,29 +22,38 @@ export default function MediaUpload() {
     name: "media",
     compute: (files) => {
       if (!files || !(files as FileList)[0]) return null;
-      const file = (files as FileList)[0];
-      return {
-        src: URL.createObjectURL(file),
-        alt: file.name,
-      };
+      const convertedFiles = Array.from(files as FileList);
+      return convertedFiles.map((item) => {
+        return {
+          src: URL.createObjectURL(item),
+          alt: item.name,
+          // TODO: read EXIF metadata if able
+        };
+      });
     },
   });
 
   return (
     <div>
+      <h1 className="font-bold text-2xl mb-2">Upload New Media</h1>
       <form noValidate={true}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        {media && <img src={media.src} alt={media.alt} className="mb-3" />}
-        <label className="border-dashed border-2 p-2">
+        <label className="bg-neutral-100 dark:bg-neutral-800 text-lg font-semibold p-3 inline-block rounded-md clickable">
           <p className="text-center">
-            {media ? "Replace media" : "Start by choosing media to upload..."}
+            {media ? "Replace" : "Choose"} medias to upload...
           </p>
           <input
             className="hidden"
             type="file"
+            multiple={true}
             {...register("media", { required: true })}
           />
         </label>
+        <div className="flex flex-row overflow-x-auto mt-5 space-x-3">
+          {media &&
+            media.map((item, idx) => (
+              <ImagePreview src={item.src} alt={item.alt} key={idx} />
+            ))}
+        </div>
         {/* Below should display after media is attached */}
       </form>
     </div>

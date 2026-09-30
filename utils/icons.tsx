@@ -1,10 +1,12 @@
 import {
   FaBars,
   FaCog,
+  FaExpandAlt,
   FaList,
   FaMoon,
   FaQuestion,
   FaSearch,
+  FaTimes,
 } from "react-icons/fa";
 import { FaArrowRightToBracket, FaUser, FaUserTag } from "react-icons/fa6";
 import { HiMail } from "react-icons/hi";
@@ -22,4 +24,6 @@ export const icons = {
   password: <MdPassword />,
   user: <FaUser />,
   nick: <FaUserTag />,
+  cancel: <FaTimes />,
+  expand: <FaExpandAlt />,
 };

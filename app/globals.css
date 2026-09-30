@@ -32,7 +32,7 @@ body {
     @apply font-normal;
   }
 
-  input:not([type="submit"]), textarea, label:has(input[type="file"]) {
+  input:not([type="submit"]), textarea {  /* label:has(input[type="file"]) */
     @apply w-full box-border px-2 py-1 outline-none rounded-md border dark:border-gray-400 dark:focus:border-white dark:caret-white font-light focus:invalid:border-red-400;
   }
 }
