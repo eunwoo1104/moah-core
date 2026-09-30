@@ -44,3 +44,7 @@ export const clientUserLoginSchema = Yup.object({
     .required("Email is required."),
   password: Yup.string().required("Password is required."),
 });
+
+export const clientMediaUploadSchema = Yup.object({
+  media: Yup.mixed().required(),
+});
