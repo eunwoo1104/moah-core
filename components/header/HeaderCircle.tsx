@@ -1,6 +1,6 @@
 "use client";
 
-import { ComponentPropsWithRef } from "react";
+import type { ComponentPropsWithRef } from "react";
 
 export function HeaderCircle({
   className,

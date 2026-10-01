@@ -1,4 +1,5 @@
-import { JWTPayload, SignJWT, jwtVerify } from "jose";
+import { SignJWT, jwtVerify } from "jose";
+import type { JWTPayload } from "jose";
 import { JWTExpired } from "jose/errors";
 import "server-only";
 

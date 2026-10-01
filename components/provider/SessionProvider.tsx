@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { getCurrentUser } from "@/utils/actions";
 import { SessionContext } from "@/utils/contexts";
-import { PartialUser } from "@/utils/types";
+import type { PartialUser } from "@/utils/types";
 
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<PartialUser | null>(null);

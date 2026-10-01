@@ -38,3 +38,34 @@ export interface SessionTable {
   device_identifier: string;
   created_at: Date | null;
 }
+
+export interface NodeTable {
+  id: number;
+  type: number;
+  url: string;
+}
+
+export enum NodeTypes {
+  MOAH = 0,
+}
+
+export interface MediaTable {
+  id: number;
+  type: number;
+  author: number;
+  node_id: number;
+}
+
+export enum MediaTypes {
+  IMAGE = 0,
+}
+
+export interface TagTable {
+  id: number;
+  name: string;
+  flags: number;
+}
+
+export enum TagFlags {
+  NONE = 0,
+}

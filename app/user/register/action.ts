@@ -1,11 +1,12 @@
 "use server";
 
-import { InferType, ValidationError } from "yup";
+import { ValidationError } from "yup";
+import type { InferType } from "yup";
 
-import database from "@/utils/database";
+import { database } from "@/utils/database";
 import { argon2encrypt } from "@/utils/encryption/argon2";
-import { MoahResponse, codes } from "@/utils/response";
-import { UserTable } from "@/utils/types";
+import { codes } from "@/utils/response";
+import type { MoahResponse } from "@/utils/response";
 import { userRegistrationSchema } from "@/utils/validation";
 
 export async function registerAction(
@@ -29,7 +30,8 @@ export async function registerAction(
     }
   }
 
-  const emailExists = await database<UserTable>("user")
+  const emailExists = await database
+    .user()
     .select("email")
     .where("email", data.email);
   if (emailExists.length !== 0)
@@ -47,7 +49,7 @@ export async function registerAction(
     nickname: data.nickname ? data.nickname : null,
   };
 
-  await database("user").insert(insertData);
+  await database.user().insert(insertData);
 
   return { code: codes.ok };
 }

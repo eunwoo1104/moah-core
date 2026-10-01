@@ -1,7 +1,7 @@
 import { createContext } from "react";
 
 import type { MessageBoxProps } from "@/components/MessageBox";
-import { PartialUser } from "@/utils/types";
+import type { PartialUser } from "@/utils/types";
 
 interface SessionContextInterface {
   user: PartialUser | null;

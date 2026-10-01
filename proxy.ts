@@ -1,12 +1,12 @@
 import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 import { createNewSession } from "@/utils/actions";
-import database from "@/utils/database";
+import { database } from "@/utils/database";
 import { sha256encrypt } from "@/utils/encryption/sha256";
 import { verifyJWT } from "@/utils/jwt";
 import { deleteSessionCookies, getDeviceIdentifier } from "@/utils/request";
-import { SessionTable } from "@/utils/types";
 
 export async function proxy(req: NextRequest) {
   console.debug(`invoked on ${req.url}`);
@@ -37,7 +37,8 @@ export async function proxy(req: NextRequest) {
     }
 
     const hashedRefreshToken = await sha256encrypt(refreshToken.value);
-    const savedSession = await database<SessionTable>("session")
+    const savedSession = await database
+      .session()
       .select("user", "device_identifier")
       .where({ refresh_token: hashedRefreshToken });
     const devIdentifier = getDeviceIdentifier(headers);
@@ -48,7 +49,8 @@ export async function proxy(req: NextRequest) {
       return;
     }
 
-    await database<SessionTable>("session")
+    await database
+      .session()
       .delete()
       .where({ refresh_token: hashedRefreshToken });
     if (

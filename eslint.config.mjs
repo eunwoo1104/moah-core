@@ -15,4 +15,9 @@ export default defineConfig([
     "next-env.d.ts",
   ]),
   eslintConfigPrettier,
+  {
+    rules: {
+      "@typescript-eslint/consistent-type-imports": "error",
+    },
+  },
 ]);

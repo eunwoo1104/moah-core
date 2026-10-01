@@ -1,11 +1,11 @@
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import { ValidationError } from "yup";
 
 import { createNewSession } from "@/utils/actions";
-import database from "@/utils/database";
+import { database } from "@/utils/database";
 import { argon2verify } from "@/utils/encryption/argon2";
 import { builResponse, codes } from "@/utils/response";
-import { PartialUser, UserTable } from "@/utils/types";
+import type { PartialUser } from "@/utils/types";
 import { userLoginSchema } from "@/utils/validation";
 
 export async function POST(req: NextRequest) {
@@ -23,9 +23,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const userData = await database<UserTable>("user")
-    .select()
-    .where("email", data.email);
+  const userData = await database.user().select().where("email", data.email);
   if (userData.length === 0)
     return builResponse(404, codes.notFound, { msg: "Email not registered" });
 

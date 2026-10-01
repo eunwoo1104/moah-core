@@ -1,6 +1,7 @@
 "use client";
 
-import { HTMLMotionProps, motion } from "motion/react";
+import { motion } from "motion/react";
+import type { HTMLMotionProps } from "motion/react";
 
 export function HeaderArea({
   className,

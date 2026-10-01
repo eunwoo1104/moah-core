@@ -2,12 +2,13 @@
 
 import { cookies, headers } from "next/headers";
 
-import database from "@/utils/database";
+import { database } from "@/utils/database";
 import { sha256encrypt } from "@/utils/encryption/sha256";
 import { createJWT } from "@/utils/jwt";
 import { deleteSessionCookies, getDeviceIdentifier } from "@/utils/request";
-import { MoahResponse, codes } from "@/utils/response";
-import { PartialUser, SessionTable, UserTable } from "@/utils/types";
+import { codes } from "@/utils/response";
+import type { MoahResponse } from "@/utils/response";
+import type { PartialUser } from "@/utils/types";
 
 export async function createNewSession(userId: number) {
   const accessToken = await createJWT({ id: userId }, "5m");
@@ -30,7 +31,7 @@ export async function createNewSession(userId: number) {
   const reqHeaders = await headers();
   const devIdent = getDeviceIdentifier(reqHeaders);
 
-  await database<SessionTable>("session").insert({
+  await database.session().insert({
     refresh_token: await sha256encrypt(refreshToken),
     user: userId,
     device_identifier: await sha256encrypt(devIdent),
@@ -44,9 +45,7 @@ export async function invalidateSession() {
   const refreshToken = cookieStore.get("refreshToken");
   if (refreshToken) {
     const hashed = await sha256encrypt(refreshToken.value);
-    await database<SessionTable>("session")
-      .delete()
-      .where("refresh_token", hashed);
+    await database.session().delete().where("refresh_token", hashed);
   }
   deleteSessionCookies(cookieStore);
 }
@@ -70,7 +69,8 @@ export async function getCurrentUser(): Promise<
   const userId = reqHeaders.get("MoAh-Session-User");
   if (!userId) return { code: codes.sessionInvalid, msg: "Session invalid" };
 
-  const data = await database<UserTable>("user")
+  const data = await database
+    .user()
     .select("email", "username", "nickname", "avatar", "created_at", "flags")
     .where("id", userId);
 

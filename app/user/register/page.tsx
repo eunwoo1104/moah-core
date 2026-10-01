@@ -3,8 +3,9 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { InferType } from "yup";
+import { useForm } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
+import type { InferType } from "yup";
 
 import { MessageBox } from "@/components/MessageBox";
 import { RHFInput } from "@/components/form/RHFInput";
