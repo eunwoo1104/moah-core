@@ -8,7 +8,7 @@ import type { SubmitHandler } from "react-hook-form";
 import type { InferType } from "yup";
 
 import { MessageBox } from "@/components/MessageBox";
-import { RHFInput } from "@/components/form/RHFInput";
+import { Input } from "@/components/form/Input";
 import { sha256encrypt } from "@/utils/encryption/sha256";
 import { icons } from "@/utils/icons";
 import { codes } from "@/utils/response";
@@ -66,7 +66,7 @@ export default function Register() {
         onSubmit={handleSubmit(onSubmit)}
         noValidate={true}
       >
-        <RHFInput
+        <Input
           label="Email"
           name="email"
           type="email"
@@ -77,7 +77,7 @@ export default function Register() {
           autoComplete="email"
           icon={icons.email}
         />
-        <RHFInput
+        <Input
           label="Password"
           name="password"
           type="password"
@@ -88,7 +88,7 @@ export default function Register() {
           autoComplete="new-password"
           icon={icons.password}
         />
-        <RHFInput
+        <Input
           label="Confirm Password"
           name="confirmPassword"
           type="password"
@@ -98,7 +98,7 @@ export default function Register() {
           placeholder="password"
           icon={icons.password}
         />
-        <RHFInput
+        <Input
           label="Username"
           name="username"
           type="text"
@@ -108,7 +108,7 @@ export default function Register() {
           placeholder="displays as @example"
           icon={icons.user}
         />
-        <RHFInput
+        <Input
           label="Display Name (Nickname)"
           name="nickname"
           type="text"

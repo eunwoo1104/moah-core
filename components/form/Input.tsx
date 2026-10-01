@@ -7,7 +7,7 @@ import type {
   UseFormRegister,
 } from "react-hook-form";
 
-export function RHFInput<T extends FieldValues>({
+export function Input<T extends FieldValues>({
   label,
   name,
   type,
@@ -17,7 +17,7 @@ export function RHFInput<T extends FieldValues>({
   placeholder,
   autoComplete,
   icon = null,
-}: RHFInputProps<T>) {
+}: InputProps<T>) {
   return (
     <label>
       <div className="flex flex-row items-center space-x-0.5">
@@ -43,7 +43,7 @@ export function RHFInput<T extends FieldValues>({
   );
 }
 
-interface RHFInputProps<TFieldValues extends FieldValues> {
+interface InputProps<TFieldValues extends FieldValues> {
   label: string;
   name: Path<TFieldValues>;
   type: React.HTMLInputTypeAttribute;

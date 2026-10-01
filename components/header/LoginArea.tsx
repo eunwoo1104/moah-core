@@ -8,7 +8,7 @@ import type { SubmitHandler } from "react-hook-form";
 import type { InferType } from "yup";
 
 import { MessageBox } from "@/components/MessageBox";
-import { RHFInput } from "@/components/form/RHFInput";
+import { Input } from "@/components/form/Input";
 import { SessionContext } from "@/utils/contexts";
 import { sha256encrypt } from "@/utils/encryption/sha256";
 import { icons } from "@/utils/icons";
@@ -64,7 +64,7 @@ export function LoginArea() {
         onSubmit={handleSubmit(onSubmit)}
         noValidate={true}
       >
-        <RHFInput
+        <Input
           label="Email"
           name="email"
           type="email"
@@ -75,7 +75,7 @@ export function LoginArea() {
           autoComplete="email"
           icon={icons.email}
         />
-        <RHFInput
+        <Input
           label="Password"
           name="password"
           type="password"
