@@ -6,7 +6,48 @@ import { createNewSession } from "@/utils/actions";
 import { database } from "@/utils/database";
 import { sha256encrypt } from "@/utils/encryption/sha256";
 import { verifyJWT } from "@/utils/jwt";
-import { deleteSessionCookies, getDeviceIdentifier } from "@/utils/request";
+import { getDeviceIdentifier } from "@/utils/request";
+
+async function tryRefreshSession(
+  headers: Headers,
+  refreshToken: string,
+): Promise<number | null> {
+  if (!refreshToken) {
+    return null;
+  }
+
+  const refreshVerify = await verifyJWT(refreshToken);
+  if (!refreshVerify) {
+    return null;
+  }
+
+  const hashedRefreshToken = await sha256encrypt(refreshToken);
+  const savedSession = await database
+    .session()
+    .select("user", "device_identifier")
+    .where({ refresh_token: hashedRefreshToken });
+  const devIdentifier = getDeviceIdentifier(headers);
+
+  if (savedSession.length === 0) {
+    // TODO: in this case JWT secret could be compromised or just whole session was reset, so should add handler for these cases
+    return null;
+  }
+
+  await database
+    .session()
+    .delete()
+    .where({ refresh_token: hashedRefreshToken });
+  if (
+    savedSession[0].device_identifier != (await sha256encrypt(devIdentifier))
+  ) {
+    // in this case refresh token is stolen
+    return null;
+  }
+
+  // recreate session
+  await createNewSession(savedSession[0].user);
+  return savedSession[0].user;
+}
 
 export async function proxy(req: NextRequest) {
   console.debug(`invoked on ${req.url}`);
@@ -18,53 +59,16 @@ export async function proxy(req: NextRequest) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken");
   if (!accessToken) {
-    deleteSessionCookies(cookieStore);
     return;
   }
 
   const sessionRes = await verifyJWT(accessToken.value);
-  if (!sessionRes) {
-    const refreshToken = cookieStore.get("refreshToken");
-    if (!refreshToken) {
-      deleteSessionCookies(cookieStore);
-      return;
-    }
-
-    const refreshVerify = await verifyJWT(refreshToken.value);
-    if (!refreshVerify) {
-      deleteSessionCookies(cookieStore);
-      return;
-    }
-
-    const hashedRefreshToken = await sha256encrypt(refreshToken.value);
-    const savedSession = await database
-      .session()
-      .select("user", "device_identifier")
-      .where({ refresh_token: hashedRefreshToken });
-    const devIdentifier = getDeviceIdentifier(headers);
-
-    if (savedSession.length === 0) {
-      // TODO: in this case JWT secret could be compromised or just whole session was reset, so should add handler for these cases
-      deleteSessionCookies(cookieStore);
-      return;
-    }
-
-    await database
-      .session()
-      .delete()
-      .where({ refresh_token: hashedRefreshToken });
-    if (
-      savedSession[0].device_identifier != (await sha256encrypt(devIdentifier))
-    ) {
-      // in this case refresh token is stolen
-      deleteSessionCookies(cookieStore);
-      return;
-    }
-
-    // recreate session
-    await createNewSession(savedSession[0].user);
-    sessionUser = savedSession[0].user;
-  } else sessionUser = sessionRes.id as number;
+  sessionUser = sessionRes
+    ? (sessionRes.id as number)
+    : await tryRefreshSession(
+        headers,
+        cookieStore.get("refreshToken")?.value as string,
+      );
   // TODO: should check whether session is from valid device
 
   if (sessionUser !== null) {
