@@ -39,7 +39,7 @@ body {
 
 @layer components {
   .clickable {
-    @apply hover:opacity-75 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50;
+    @apply hover:opacity-75 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 transition-opacity duration-200;
   }
 
   .circle-icon {
