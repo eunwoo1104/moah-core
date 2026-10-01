@@ -1,11 +1,9 @@
 "use client";
 
-import type {
-  FieldErrors,
-  FieldValues,
-  Path,
-  UseFormRegister,
-} from "react-hook-form";
+import type { FieldValues, UseFormRegister } from "react-hook-form";
+
+import { Label } from "./Label";
+import type { LabelProps } from "./Label";
 
 export function Input<T extends FieldValues>({
   label,
@@ -19,19 +17,13 @@ export function Input<T extends FieldValues>({
   icon = null,
 }: InputProps<T>) {
   return (
-    <label>
-      <div className="flex flex-row items-center space-x-0.5">
-        {icon}
-        <p>
-          {label} {required && <span className="text-red-400">*</span>}
-        </p>
-        <div className="flex-1" />
-        {errors[name] && (
-          <p className="font-light text-sm text-red-500 dark:text-red-400">
-            {errors[name].message as string}
-          </p>
-        )}
-      </div>
+    <Label
+      label={label}
+      errors={errors}
+      name={name}
+      required={required}
+      icon={icon}
+    >
       <input
         className={errors[name] && "border-red-500 dark:border-red-400"}
         type={type}
@@ -39,18 +31,15 @@ export function Input<T extends FieldValues>({
         autoComplete={autoComplete}
         {...register(name, { required: required })}
       />
-    </label>
+    </Label>
   );
 }
 
-interface InputProps<TFieldValues extends FieldValues> {
-  label: string;
-  name: Path<TFieldValues>;
+interface InputProps<
+  TFieldValues extends FieldValues,
+> extends LabelProps<TFieldValues> {
   type: React.HTMLInputTypeAttribute;
   register: UseFormRegister<TFieldValues>;
-  errors: FieldErrors<TFieldValues>;
-  required: boolean;
   placeholder?: string;
-  autoComplete?: string;
-  icon?: React.ReactElement | null;
+  autoComplete?: React.HTMLInputAutoCompleteAttribute;
 }
