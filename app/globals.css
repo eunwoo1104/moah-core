@@ -20,11 +20,11 @@ body {
     font-family: inherit;
   }
 
-  input, label, textarea {
+  input, label, textarea, select {
     display: block;
   }
 
-  input, button {
+  input, button, select {
     @apply m-0 p-0 border-0 border-solid;
   }
 
@@ -32,8 +32,16 @@ body {
     @apply font-normal;
   }
 
-  input:not([type="submit"]), textarea {  /* label:has(input[type="file"]) */
+  input:not([type="submit"]), textarea, select {  /* label:has(input[type="file"]) */
     @apply w-full box-border px-2 py-1 outline-none rounded-md border dark:border-gray-400 dark:focus:border-white dark:caret-white font-light focus:invalid:border-red-400;
+  }
+
+  option {
+    @apply bg-neutral-200 dark:bg-neutral-850;
+  }
+
+  &::picker(select) {  /* not sure this works */
+    @apply rounded-md border;
   }
 }
 

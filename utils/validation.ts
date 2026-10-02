@@ -47,4 +47,6 @@ export const clientUserLoginSchema = Yup.object({
 
 export const clientMediaUploadSchema = Yup.object({
   media: Yup.mixed().required(),
+  tags: Yup.array().of(Yup.string()).optional(),
+  node: Yup.number().required(),
 });

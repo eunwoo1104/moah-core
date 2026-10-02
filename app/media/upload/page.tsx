@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, useWatch } from "react-hook-form";
 
 import { ImagePreview } from "@/components/ImagePreview";
+import { Select } from "@/components/form/Select";
 import { clientMediaUploadSchema } from "@/utils/validation";
 
 export default function MediaUpload() {
@@ -55,6 +56,18 @@ export default function MediaUpload() {
             ))}
         </div>
         {/* Below should display after media is attached */}
+        <Select
+          label="Select node"
+          name="node"
+          register={register}
+          errors={errors}
+          required={true}
+        >
+          {/* Placeholder */}
+          <option value={1}>node-1</option>
+          <option value={2}>node-2</option>
+          <option value={3}>node-3</option>
+        </Select>
       </form>
     </div>
   );
